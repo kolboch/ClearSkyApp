@@ -1,5 +1,9 @@
 package com.example.kb.clearsky.model.api_specific;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 /**
  * Created by Karlo on 2017-07-04.
  */
@@ -7,18 +11,23 @@ package com.example.kb.clearsky.model.api_specific;
 public class MyDate {
 
     private long dateUnix;
-    private String dateText;
+    private Date date;
 
-    public MyDate(long dateUnix, String dateText) {
+    public MyDate(long dateUnix) {
         this.dateUnix = dateUnix;
-        this.dateText = dateText;
+        this.date = new Date(dateUnix);
     }
 
     public long getDateUnix() {
         return dateUnix;
     }
 
-    public String getDateText() {
-        return dateText;
+    public Date getDate() {
+        return date;
+    }
+
+    public String getDate(String datePattern) {
+        SimpleDateFormat df = new SimpleDateFormat(datePattern);
+        return df.format(date);
     }
 }
