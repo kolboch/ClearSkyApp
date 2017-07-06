@@ -1,36 +1,35 @@
 package com.example.kb.clearsky.model.api_specific;
 
-/**
- * Created by Karlo on 2017-07-04.
- */
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
 public class Wind {
 
-    private float speed;
-    private float direction;
+    @SerializedName("speed")
+    @Expose
+    private Double windSpeed;
 
-    public Wind(){
+    /**
+     * wind direction represented in degrees ( meteorological)
+     */
+    @SerializedName("deg")
+    @Expose
+    private Double direction;
 
+    public Double getWindSpeed() {
+        return windSpeed;
     }
 
-    public Wind(float speed, float direction) {
-        this.speed = speed;
-        this.direction = direction;
+    public void setWindSpeed(Double windSpeed) {
+        this.windSpeed = windSpeed;
     }
 
-    public float getSpeed() {
-        return speed;
-    }
-
-    public void setSpeed(float speed) {
-        this.speed = speed;
-    }
-
-    public float getDirection() {
+    public Double getDirection() {
         return direction;
     }
 
-    public void setDirection(float direction) {
+    public void setDirection(Double direction) {
         this.direction = direction;
     }
+
 }
