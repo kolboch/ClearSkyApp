@@ -35,7 +35,7 @@ public class WeatherInfo {
 
     @SerializedName("temp_kf")
     @Expose
-    private Integer tempKf;
+    private Double tempKf;
 
     public Double getTemp() {
         return temp;
@@ -93,11 +93,11 @@ public class WeatherInfo {
         this.humidityPercent = humidityPercent;
     }
 
-    public Integer getTempKf() {
+    public Double getTempKf() {
         return tempKf;
     }
 
-    public void setTempKf(Integer tempKf) {
+    public void setTempKf(Double tempKf) {
         this.tempKf = tempKf;
     }
 
