@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">ClearSky</string>
+
+    <!-- strings settings layout -->
+    <string name="hint_city_selection">Type city</string>
+    <string name="hint_country_selection">Type country</string>
+    <string name="label_city_selection">Select city</string>
+    <string name="label_country_selection">Select country</string>
+
+    <!-- menu items -->
+    <string name="settings_title">Settings</string>
 </resources>

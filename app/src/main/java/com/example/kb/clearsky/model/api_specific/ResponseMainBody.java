@@ -1,6 +1,5 @@
 package com.example.kb.clearsky.model.api_specific;
 
-import com.example.kb.clearsky.model.City;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 

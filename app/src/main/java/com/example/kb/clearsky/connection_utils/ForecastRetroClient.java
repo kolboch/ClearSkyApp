@@ -1,4 +1,4 @@
-package com.example.kb.clearsky.model.connection_utils;
+package com.example.kb.clearsky.connection_utils;
 
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -7,7 +7,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
  * Created by Karlo on 2017-07-07.
  */
 
-public class RetroClient {
+public class ForecastRetroClient {
 
     private static final String BASE_URL = "http://api.openweathermap.org/data/2.5/";
 
@@ -17,7 +17,7 @@ public class RetroClient {
                 .build();
     }
 
-    public static ApiService getApiService() {
-        return getRetrofitInstance().create(ApiService.class);
+    public static ForecastApiService getApiService() {
+        return getRetrofitInstance().create(ForecastApiService.class);
     }
 }
