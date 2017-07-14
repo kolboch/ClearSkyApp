@@ -1,7 +1,6 @@
-package com.example.kb.clearsky;
+package com.example.kb.clearsky.adapters;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -103,19 +102,17 @@ public class MyAdapterCountries extends BaseAdapter implements Filterable {
         if (filter == null) {
             filter = new CountriesFilter();
         }
-        Log.v("ADAPTER", "GET FILTER CALLED ");
         return filter;
     }
 
     private class CountriesFilter extends Filter {
-        private static final int THRESHOLD = 3;
+        private static final int THRESHOLD = 2;
 
         public CountriesFilter() {
         }
 
         @Override
         protected FilterResults performFiltering(CharSequence charSequence) {
-            Log.v("FILTER CLASS", "Char sequence: " + charSequence + "Perform filtering countries size:" + countries.size());
             FilterResults results = new FilterResults();
             if (charSequence != null && charSequence.length() >= THRESHOLD) {
                 List<Country> filtered = new ArrayList<>();
@@ -135,7 +132,6 @@ public class MyAdapterCountries extends BaseAdapter implements Filterable {
 
         @Override
         protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
-            Log.v("FILTER CLASS", "Publish results");
             if (filterResults.count == 0) {
                 notifyDataSetInvalidated();
             } else {

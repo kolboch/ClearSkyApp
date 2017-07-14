@@ -5,7 +5,9 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.example.kb.clearsky.db_handlers.DbClearSkyContract.CitiesTable;
 import com.example.kb.clearsky.db_handlers.DbClearSkyContract.CountriesTable;
+import com.example.kb.clearsky.model.database_specific.City;
 import com.example.kb.clearsky.model.database_specific.Country;
 
 import java.util.List;
@@ -16,6 +18,8 @@ import java.util.List;
 
 public class DbAccess {
 
+    private static final String LIKE = " LIKE ";
+    private static final String PARAMETER_DYNAMIC = " ? ";
     private SQLiteOpenHelper openHelper;
     private SQLiteDatabase database;
     private static DbAccess instance;
@@ -48,12 +52,8 @@ public class DbAccess {
     }
 
     public List<Country> getCountries() {
-        List<Country> list;
-        Cursor cursor = database.query(true, CountriesTable.TABLE_NAME,
-                new String[]{CountriesTable.COL_1_COUNTRY_CODE, CountriesTable.COL_2_COUNTRY_NAME},
-                null, null, null, null, null, null);
-        list = DbUtils.collectCountries(cursor);
-        return list;
+        Cursor cursor = getCountriesCursor();
+        return DbUtils.collectCountries(cursor);
     }
 
     public Cursor getCountriesCursor() {
@@ -64,11 +64,25 @@ public class DbAccess {
         return cursor;
     }
 
-//    TODO queries needed
-//     --- usage example ---
-//     DbAccess databaseAccess = DbAccess.getInstance(this);
-//     databaseAccess.open();
-//     List<String> quotes = databaseAccess.getQuotes();
-//     databaseAccess.close();
+    public List<City> getCitiesWithinCountry(Country country){
+        Cursor cursor = getCitiesCursorWithinCountry(country);
+        return DbUtils.collectCities(cursor);
+    }
 
+    public Cursor getCitiesCursorWithinCountry(Country country){
+        String[] columns = new String[]{
+                CitiesTable.COL_1_CITY_ID,
+                CitiesTable.COL_2_CITY_NAME,
+                CitiesTable.COL_3_COUNTRY_CODE,
+                CitiesTable.COL_4_CITY_LONGITUDE,
+                CitiesTable.COL_5_CITY_LATITUDE
+        };
+        String selection = CitiesTable.COL_3_COUNTRY_CODE + LIKE + PARAMETER_DYNAMIC;
+        String[] selectionArgs = new String[]{country.getCountryCode()};
+        Cursor cursor = database.query(true, CitiesTable.TABLE_NAME,
+                columns,
+                selection, selectionArgs,
+                null, null, null, null);
+        return cursor;
+    }
 }

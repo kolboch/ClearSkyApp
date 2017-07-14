@@ -20,6 +20,19 @@ public class City {
         this.latitude = latitude;
     }
 
+    public City(City other){
+        this.cityID = other.getCityID();
+        this.cityName = other.getCityName();
+        this.countryCode = other.getCountryCode();
+        this.longitude = other.getLongitude();
+        this.latitude = other.getLatitude();
+    }
+
+    @Override
+    public String toString() {
+        return String.format("%s (%.2f, %.2f)", cityName, longitude, latitude);
+    }
+
     public Long getCityID() {
         return cityID;
     }
