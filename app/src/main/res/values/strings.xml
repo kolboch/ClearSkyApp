@@ -9,4 +9,13 @@
 
     <!-- menu items -->
     <string name="settings_title">Settings</string>
+
+    <!-- permission strings -->
+    <string name="permission_location_info">Allow to get estimated location.</string>
+    <string name="got_it">Got it</string>
+    <string name="unable_to_get_location">Unable to get location.</string>
+    <string name="positivie_yes">Yes</string>
+    <string name="negative_no">No</string>
+    <string name="gps_disabled_switch_on">Your GPS seems to be disabled, do you want to enable it?</string>
+    <string name="wireless_disabled_switch_on">Your wireless location settings are off, do you want to enable it?</string>
 </resources>
