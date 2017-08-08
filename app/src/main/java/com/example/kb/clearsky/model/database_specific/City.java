@@ -1,5 +1,9 @@
 package com.example.kb.clearsky.model.database_specific;
 
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.util.Locale;
+
 /**
  * Created by Karol on 2017-07-10.
  */
@@ -30,7 +34,8 @@ public class City {
 
     @Override
     public String toString() {
-        return String.format("%s (%.2f, %.2f)", cityName, longitude, latitude);
+        DecimalFormat df = new DecimalFormat("#.00", DecimalFormatSymbols.getInstance(Locale.US));
+        return String.format("%s (%s, %s)", cityName, df.format(latitude), df.format(longitude));
     }
 
     public Long getCityID() {

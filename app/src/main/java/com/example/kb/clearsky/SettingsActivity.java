@@ -3,8 +3,10 @@ package com.example.kb.clearsky;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -18,6 +20,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.example.kb.clearsky.FragmentMapScope.OnFragmentInteractionListener;
 import com.example.kb.clearsky.adapters.MyAdapterCities;
 import com.example.kb.clearsky.adapters.MyAdapterCountries;
 import com.example.kb.clearsky.location.LocationFetcher;
@@ -30,7 +33,7 @@ import java.util.Locale;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class SettingsActivity extends AppCompatActivity implements LocationListener {
+public class SettingsActivity extends AppCompatActivity implements LocationListener, OnFragmentInteractionListener {
 
     private static final String LOG_TAG = SettingsActivity.class.getSimpleName();
 
@@ -44,6 +47,8 @@ public class SettingsActivity extends AppCompatActivity implements LocationListe
     TextView locationResultTest;
     @BindView(R.id.location_button)
     Button locationButton;
+    @BindView(R.id.switch_location_place)
+    FloatingActionButton locationPlaceSwitch;
 
     private MyAdapterCountries adapterCountries;
     private MyAdapterCities adapterCities;
@@ -55,6 +60,8 @@ public class SettingsActivity extends AppCompatActivity implements LocationListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
+        FragmentMapScope scope = new FragmentMapScope();
+        getSupportFragmentManager().beginTransaction().add(R.id.fragment_map_scope, scope).commit();
         ButterKnife.bind(this);
         selectedCountry = new Country();
         locationFetcher = new LocationFetcher(this, this.findViewById(android.R.id.content).getRootView());
@@ -175,5 +182,10 @@ public class SettingsActivity extends AppCompatActivity implements LocationListe
 
     private boolean isNewerThanCurrent(Location other) {
         return currentLocation != null ? other != null && other.getTime() > currentLocation.getTime() : true;
+    }
+
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+
     }
 }
