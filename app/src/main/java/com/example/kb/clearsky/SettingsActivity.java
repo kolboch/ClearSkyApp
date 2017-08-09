@@ -3,7 +3,6 @@ package com.example.kb.clearsky;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
@@ -20,11 +19,17 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.example.kb.clearsky.FragmentMapScope.OnFragmentInteractionListener;
 import com.example.kb.clearsky.adapters.MyAdapterCities;
 import com.example.kb.clearsky.adapters.MyAdapterCountries;
 import com.example.kb.clearsky.location.LocationFetcher;
 import com.example.kb.clearsky.model.database_specific.Country;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -33,9 +38,16 @@ import java.util.Locale;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class SettingsActivity extends AppCompatActivity implements LocationListener, OnFragmentInteractionListener {
+public class SettingsActivity extends AppCompatActivity implements LocationListener, OnMapReadyCallback {
+
+    //TODO saving last location and selection
+    //TODO handling picked locations
+    //TODO switch button function
+    //TODO handling info about google maps if not available - 'can get location, cannot display'
+    //TODO check if it is possible to make map static
 
     private static final String LOG_TAG = SettingsActivity.class.getSimpleName();
+    private static final int MARKER_COLOR = 230;
 
     @BindView(R.id.toolbar_settings)
     Toolbar toolbar;
@@ -49,19 +61,20 @@ public class SettingsActivity extends AppCompatActivity implements LocationListe
     Button locationButton;
     @BindView(R.id.switch_location_place)
     FloatingActionButton locationPlaceSwitch;
+    @BindView(R.id.map_scope)
+    MapView mapView;
 
     private MyAdapterCountries adapterCountries;
     private MyAdapterCities adapterCities;
     private Country selectedCountry;
     private LocationFetcher locationFetcher;
     private Location currentLocation;
+    private GoogleMap googleMap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
-        FragmentMapScope scope = new FragmentMapScope();
-        getSupportFragmentManager().beginTransaction().add(R.id.fragment_map_scope, scope).commit();
         ButterKnife.bind(this);
         selectedCountry = new Country();
         locationFetcher = new LocationFetcher(this, this.findViewById(android.R.id.content).getRootView());
@@ -69,6 +82,8 @@ public class SettingsActivity extends AppCompatActivity implements LocationListe
         setMyToolbar();
         setAutoCompleteTextViews();
         setButtonsListeners();
+        mapView.onCreate(savedInstanceState);
+        setUpMapView();
     }
 
     @Override
@@ -91,8 +106,15 @@ public class SettingsActivity extends AppCompatActivity implements LocationListe
     }
 
     @Override
+    protected void onStop() {
+        super.onStop();
+        mapView.onStop();
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
+        mapView.onDestroy();
         locationFetcher.dispose();
     }
 
@@ -100,9 +122,11 @@ public class SettingsActivity extends AppCompatActivity implements LocationListe
     public void onLocationChanged(Location location) {
         Log.v(LOG_TAG, "GOT LOCATION !!!");
         this.currentLocation = location;
-        updateLocationTextView();
         locationFetcher.removeUpdates();
+        updateLocationTextView();
+        updateMapView();
     }
+
 
     @Override
     public void onStatusChanged(String s, int i, Bundle bundle) {
@@ -117,6 +141,29 @@ public class SettingsActivity extends AppCompatActivity implements LocationListe
     @Override
     public void onProviderDisabled(String s) {
 
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mapView.onPause();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mapView.onStart();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mapView.onResume();
+    }
+
+
+    private void setUpMapView() {
+        mapView.getMapAsync(this);
     }
 
     private void setMyToolbar() {
@@ -138,6 +185,7 @@ public class SettingsActivity extends AppCompatActivity implements LocationListe
                 locationFetcher.enableAskingForPermission();
                 locationFetcher.updateLocation();
                 updateLocationTextView();
+                updateMapView();
             }
         });
     }
@@ -184,8 +232,22 @@ public class SettingsActivity extends AppCompatActivity implements LocationListe
         return currentLocation != null ? other != null && other.getTime() > currentLocation.getTime() : true;
     }
 
-    @Override
-    public void onFragmentInteraction(Uri uri) {
+    private void updateMapView(){
+        if(currentLocation != null && googleMap != null){
+            LatLng coordinates = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
+            googleMap.addMarker(new MarkerOptions().position(coordinates).icon(BitmapDescriptorFactory.defaultMarker(MARKER_COLOR)));
+            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(coordinates, 10));
+            Log.v(LOG_TAG, "UPDATED CAMERA :)");
+        }
+    }
 
+    @Override
+    public void onMapReady(GoogleMap map) {
+        Log.v(LOG_TAG, "Map ready called");
+        LatLng coordinates = new LatLng(0, 0);
+        googleMap = map;
+        googleMap.addMarker(new MarkerOptions().position(coordinates).icon(BitmapDescriptorFactory.defaultMarker(MARKER_COLOR)));
+        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(coordinates, 15));
+        mapView.onResume();
     }
 }
