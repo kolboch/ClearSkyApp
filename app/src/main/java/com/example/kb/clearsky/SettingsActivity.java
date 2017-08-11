@@ -17,11 +17,14 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.kb.clearsky.adapters.MyAdapterCities;
 import com.example.kb.clearsky.adapters.MyAdapterCountries;
 import com.example.kb.clearsky.location.LocationFetcher;
+import com.example.kb.clearsky.location.LocationImageTask;
+import com.example.kb.clearsky.location.LocationImageUrlBuilder;
 import com.example.kb.clearsky.model.database_specific.Country;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -31,6 +34,9 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Locale;
@@ -48,6 +54,7 @@ public class SettingsActivity extends AppCompatActivity implements LocationListe
 
     private static final String LOG_TAG = SettingsActivity.class.getSimpleName();
     private static final int MARKER_COLOR = 230;
+    private static final String API_KEY_STATIC_MAP = "AIzaSyBK1-ju7NlNrMK7P3wV2LYbhgIVS5ft2os";
 
     @BindView(R.id.toolbar_settings)
     Toolbar toolbar;
@@ -63,6 +70,8 @@ public class SettingsActivity extends AppCompatActivity implements LocationListe
     FloatingActionButton locationPlaceSwitch;
     @BindView(R.id.map_scope)
     MapView mapView;
+    @BindView(R.id.map_image)
+    ImageView mapImageView;
 
     private MyAdapterCountries adapterCountries;
     private MyAdapterCities adapterCities;
@@ -125,6 +134,7 @@ public class SettingsActivity extends AppCompatActivity implements LocationListe
         locationFetcher.removeUpdates();
         updateLocationTextView();
         updateMapView();
+        getMapImage(); //testing
     }
 
 
@@ -186,6 +196,7 @@ public class SettingsActivity extends AppCompatActivity implements LocationListe
                 locationFetcher.updateLocation();
                 updateLocationTextView();
                 updateMapView();
+                getMapImage(); //testing
             }
         });
     }
@@ -232,8 +243,8 @@ public class SettingsActivity extends AppCompatActivity implements LocationListe
         return currentLocation != null ? other != null && other.getTime() > currentLocation.getTime() : true;
     }
 
-    private void updateMapView(){
-        if(currentLocation != null && googleMap != null){
+    private void updateMapView() {
+        if (currentLocation != null && googleMap != null) {
             LatLng coordinates = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
             googleMap.addMarker(new MarkerOptions().position(coordinates).icon(BitmapDescriptorFactory.defaultMarker(MARKER_COLOR)));
             googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(coordinates, 10));
@@ -249,5 +260,27 @@ public class SettingsActivity extends AppCompatActivity implements LocationListe
         googleMap.addMarker(new MarkerOptions().position(coordinates).icon(BitmapDescriptorFactory.defaultMarker(MARKER_COLOR)));
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(coordinates, 15));
         mapView.onResume();
+    }
+
+    private void getMapImage() {
+        //TODO check Internet connectivity
+        if (currentLocation == null) {
+            return;
+        }
+        LocationImageTask task = new LocationImageTask(mapImageView);
+        URL url = null;
+        try {
+            url = LocationImageUrlBuilder.buildUrl(currentLocation,
+                    LocationImageUrlBuilder.MAPTYPE_TERRAIN,
+                    LocationImageUrlBuilder.ZOOM_CITY_PLUS,
+                    LocationImageUrlBuilder.COLOR_BLUE,
+                    LocationImageUrlBuilder.MARKER_MID,
+                    LocationImageUrlBuilder.parseSizeToString(mapImageView.getWidth(), mapImageView.getHeight())
+            );
+        } catch (UnsupportedEncodingException | MalformedURLException e) {
+            e.printStackTrace();
+            Log.e(LOG_TAG, e.toString());
+        }
+        task.execute(url);
     }
 }

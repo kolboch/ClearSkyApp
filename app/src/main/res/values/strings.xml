@@ -20,6 +20,4 @@
     <string name="gps_disabled_switch_on">Your GPS seems to be disabled, do you want to enable it?</string>
     <string name="wireless_disabled_switch_on">Your wireless location settings are off, do you want to enable it?</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
